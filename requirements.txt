@@ -1,0 +1,5 @@
+pandas
+librosa
+numpy
+tensorflow
+absl-py
