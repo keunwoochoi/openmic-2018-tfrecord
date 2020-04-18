@@ -6,7 +6,9 @@ This repo contains scripts to create its `tfrecords` version.
 
 ## Usage
 
-Preparation - as written in `openmic-2018.sh`.
+### Preparation
+
+As written in `openmic-2018.sh`.
 
 ```bash
 cd ~
@@ -29,15 +31,19 @@ python openmic2018.py --openmic_dir=$HOME"/openmic-2018-raw/openmic-2018" \
 
 ```
 
-Loading: use `dataset.py`
+### Loading
+
+See `dataset.py`.
 
 ```python
 openmic = dataset.Openmic(path='openmic-2018', train=True)
 ds = openmic.get_dataset(batch_size=16, shuffle=True, repeats=-1)
+
+# now use `ds` to train your model  
 ```
 
 
-## Note
+## Notes
 Instruments are alphabetically sorted.
 ```
 {"accordion": 0, "banjo": 1, "bass": 2, "cello": 3, "clarinet": 4, 

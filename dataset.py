@@ -18,6 +18,14 @@ class Openmic:
         self.pattern = '{}_*.tfrecords'.format(set_name)
 
     def init_dataset(self):
+        def preprocess_example(example):
+            audio, sr = tf.audio.decode_wav(example['audio'])
+            return {'track_id': example['track_id'],
+                    'audio': audio,
+                    'sample_rate': sr,
+                    'nhot_vector': example['nhot_vector'],
+                    }
+
         seed = None if self.train else _FIXED_SEED
 
         ds = tf.data.Dataset.list_files(
@@ -33,6 +41,8 @@ class Openmic:
         options.experimental_deterministic = not self.train
 
         ds = ds.with_options(options)
+
+        ds = ds.map(preprocess_example, num_parallel_calls=_AUTOTUNE)
         return ds
 
     def get_dataset(self, batch_size, shuffle=True, repeats=-1):

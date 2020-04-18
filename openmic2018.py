@@ -47,8 +47,15 @@ def id_to_audio_filename(sample_key: str, ext='ogg'):
     return os.path.join('audio', sample_key[:3], '%s.%s' % (sample_key, ext))
 
 
-def load_audio(path, sr):
-    src, _ = librosa.load(path, sr=sr, mono=True)
+def load_audio(path, sr, mono=True):
+    src, _ = librosa.load(path, sr=sr, mono=mono)
+
+    # reshape it to (length, channel)
+    ndim = src.ndim
+    if ndim == 1:
+        src = np.expand_dims(src, 1)
+    elif ndim == 2:
+        src = src.T
     return src
 
 
@@ -113,17 +120,18 @@ def openmic_item_to_tfexample(id, audio_path, label, inst_idxs, sr):
         audio_path (str):
         label (np.array): n-hot-vector e.g., [0.0, 1.0, 1.0, 0.0. 0.0. 0.0.. ]
         inst_idxs (list): list of inst index.  e.g., [1, 2]
+        sr (int): sampling rate
     """
     audio = load_audio(audio_path, sr)
+
     feature = {
         'track_id': bytes_feature(id.encode('utf-8')),
-        'waveform_%s'
-        % sr: float_feature(
-            audio.flatten().tolist()
-        ),  # audio is a list of floats length of 220544 if sr=22050
+        'audio': bytes_feature(
+            [tf.audio.encode_wav(audio, sample_rate=sr).numpy()]
+        ),
         'nhot_vector': float_feature(
             label.tolist()
-        ),  # N-hot label with float32, e.g. [1.0, 0.0, 1.0]
+        ),
         'inst_idxs': int64_feature(inst_idxs),
     }
     return tf.train.Example(features=tf.train.Features(feature=feature))
