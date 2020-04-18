@@ -58,7 +58,8 @@ Inside the resulting `tfrecord` files:
 >>> d = next(it)
 >>> d
 {'track_id': [b'000046_3840'], 
-'inst_idxs': array([ 4,  7, 16]), 
-'waveform_22050': array([ 0.        ,  0.        ,  0.        , ..., -0.01253502, -0.01636652, -0.02074894], dtype=float32), 
-'nhot_vector': array([0., 0., 0., 0., 1., 0., 0., 1., 0., 0., 0., 0., 0., 0., 0., 0., 1., 0., 0., 0.], dtype=float32)}
+'inst_idxs': array([ 4,  7, 16]),  
+'nhot_vector': array([0., 0., 0., 0., 1., 0., 0., 1., 0., 0., 0., 0., 0., 0., 0., 0., 1., 0., 0., 0.], dtype=float32),
+'audio': []  # a result of `tf.audio.encode_audio()` which is (waveform, sr) 
+}
 ```
